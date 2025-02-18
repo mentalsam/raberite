@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>家賃収入計算ツール</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 400px;
+            margin: 20px auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        input, button {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            font-size: 16px;
+        }
+        button {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        .result {
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h2>家賃収入計算ツール</h2>
+    <label for="rent">家賃 (円)</label>
+    <input type="number" id="rent" placeholder="例: 55000">
+    <label for="managementFee">管理費 (%):</label>
+    <input type="number" id="managementFee" placeholder="例: 5">
+    <label for="taxRate">消費税率 (%):</label>
+    <input type="number" id="taxRate" value="10">
+    <button onclick="calculateIncome()">計算</button>
+    <div class="result" id="monthlyIncome">月額収入: - 円</div>
+    <div class="result" id="yearlyIncome">年間収入: - 円</div>
+
+    <script>
+        function calculateIncome() {
+            let rent = parseFloat(document.getElementById("rent").value);
+            let managementFeeRate = parseFloat(document.getElementById("managementFee").value) / 100;
+            let taxRate = parseFloat(document.getElementById("taxRate").value) / 100;
+
+            if (isNaN(rent) || isNaN(managementFeeRate) || isNaN(taxRate)) {
+                alert("すべての項目を正しく入力してください。");
+                return;
+            }
+
+            // 管理費の計算（家賃から差し引く）
+            let managementFee = rent * managementFeeRate;
+            let tax = managementFee * taxRate;
+            let totalDeduction = managementFee + tax;
+
+            // 月額収入（家賃から管理費と消費税を引く）
+            let monthlyIncome = rent - totalDeduction;
+
+            // 年間収入
+            let yearlyIncome = monthlyIncome * 12;
+
+            // 結果を表示
+            document.getElementById("monthlyIncome").innerText = `月額収入: ${monthlyIncome.toLocaleString()} 円`;
+            document.getElementById("yearlyIncome").innerText = `年間収入: ${yearlyIncome.toLocaleString()} 円`;
+        }
+    </script>
+</body>
+
+</html>
