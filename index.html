@@ -3,78 +3,446 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>家賃収入計算ツール</title>
+    <title>賃貸確定申告サポートツール</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            max-width: 400px;
-            margin: 20px auto;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
             padding: 20px;
-            border: 1px solid #ccc;
-            border-radius: 10px;
-            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+            background-color: #f5f5f5;
         }
-        input, button {
+        h1, h2, h3 {
+            color: #2c3e50;
+        }
+        .container {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input, select {
             width: 100%;
-            padding: 10px;
-            margin: 5px 0;
-            font-size: 16px;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
         }
         button {
-            background-color: #28a745;
+            background-color: #3498db;
             color: white;
             border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
             cursor: pointer;
+            font-size: 16px;
         }
         button:hover {
-            background-color: #218838;
+            background-color: #2980b9;
         }
         .result {
-            font-size: 18px;
-            font-weight: bold;
-            margin-top: 10px;
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-left: 4px solid #3498db;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .info-text {
+            background-color: #e8f4f8;
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+        }
+        .tab {
+            overflow: hidden;
+            border: 1px solid #ccc;
+            background-color: #f1f1f1;
+            border-radius: 4px 4px 0 0;
+        }
+        .tab button {
+            background-color: inherit;
+            float: left;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            padding: 10px 16px;
+            transition: 0.3s;
+            color: #333;
+        }
+        .tab button:hover {
+            background-color: #ddd;
+        }
+        .tab button.active {
+            background-color: #3498db;
+            color: white;
+        }
+        .tabcontent {
+            display: none;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-top: none;
+            border-radius: 0 0 4px 4px;
+            background-color: white;
+        }
+        .show {
+            display: block;
         }
     </style>
 </head>
 <body>
-    <h2>家賃収入計算ツール</h2>
-    <label for="rent">家賃 (円)</label>
-    <input type="number" id="rent" placeholder="例: 55000">
-    <label for="managementFee">管理費 (%):</label>
-    <input type="number" id="managementFee" placeholder="例: 5">
-    <label for="taxRate">消費税率 (%):</label>
-    <input type="number" id="taxRate" value="10">
-    <button onclick="calculateIncome()">計算</button>
-    <div class="result" id="monthlyIncome">月額収入: - 円</div>
-    <div class="result" id="yearlyIncome">年間収入: - 円</div>
-
+    <h1>賃貸確定申告サポートツール</h1>
+    <p>このツールは賃貸所得の確定申告を簡単に計算するためのものです。必要な情報を入力して、所得税と控除額を計算しましょう。</p>
+    
+    <div class="tab">
+        <button class="tablinks active" onclick="openTab(event, 'calculator')">所得計算ツール</button>
+        <button class="tablinks" onclick="openTab(event, 'guide')">確定申告ガイド</button>
+        <button class="tablinks" onclick="openTab(event, 'documents')">必要書類チェックリスト</button>
+    </div>
+    
+    <div id="calculator" class="tabcontent show">
+        <div class="container">
+            <h2>賃貸所得計算</h2>
+            <div class="info-text">
+                <p>賃貸所得 = 総収入 - 必要経費</p>
+            </div>
+            
+            <h3>収入情報</h3>
+            <div class="form-group">
+                <label for="totalRent">年間家賃収入（円）</label>
+                <input type="number" id="totalRent" placeholder="例: 1200000">
+            </div>
+            <div class="form-group">
+                <label for="otherIncome">その他収入（円）</label>
+                <input type="number" id="otherIncome" placeholder="例: 敷金、礼金など">
+            </div>
+            
+            <h3>経費情報</h3>
+            <div class="form-group">
+                <label for="propertyTax">固定資産税（円）</label>
+                <input type="number" id="propertyTax" placeholder="例: 50000">
+            </div>
+            <div class="form-group">
+                <label for="insurance">火災保険料（円）</label>
+                <input type="number" id="insurance" placeholder="例: 20000">
+            </div>
+            <div class="form-group">
+                <label for="maintenance">修繕費（円）</label>
+                <input type="number" id="maintenance" placeholder="例: 100000">
+            </div>
+            <div class="form-group">
+                <label for="management">管理費（円）</label>
+                <input type="number" id="management" placeholder="例: 120000">
+            </div>
+            <div class="form-group">
+                <label for="depreciation">減価償却費（円）</label>
+                <input type="number" id="depreciation" placeholder="例: 300000">
+            </div>
+            <div class="form-group">
+                <label for="loan">ローン利息（円）</label>
+                <input type="number" id="loan" placeholder="例: 200000">
+            </div>
+            <div class="form-group">
+                <label for="otherExpenses">その他経費（円）</label>
+                <input type="number" id="otherExpenses" placeholder="例: 旅費、通信費など">
+            </div>
+            
+            <h3>青色申告情報</h3>
+            <div class="form-group">
+                <label for="blueForm">青色申告を利用しますか？</label>
+                <select id="blueForm">
+                    <option value="none">いいえ（白色申告）</option>
+                    <option value="simple">はい（簡易帳簿）</option>
+                    <option value="full">はい（複式簿記）</option>
+                </select>
+            </div>
+            
+            <button onclick="calculateIncome()">計算する</button>
+            
+            <div id="result" class="result" style="display: none;">
+                <h3>計算結果</h3>
+                <div id="resultContent"></div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="guide" class="tabcontent">
+        <div class="container">
+            <h2>確定申告ガイド</h2>
+            <h3>賃貸所得の確定申告スケジュール</h3>
+            <ul>
+                <li><strong>1月1日〜12月31日</strong>: 課税対象期間</li>
+                <li><strong>2月16日〜3月15日</strong>: 確定申告期間</li>
+                <li><strong>3月15日</strong>: 申告書提出と納税の期限</li>
+            </ul>
+            
+            <h3>青色申告と白色申告の違い</h3>
+            <table>
+                <tr>
+                    <th></th>
+                    <th>白色申告</th>
+                    <th>青色申告（簡易帳簿）</th>
+                    <th>青色申告（複式簿記）</th>
+                </tr>
+                <tr>
+                    <td>控除額</td>
+                    <td>なし</td>
+                    <td>10万円</td>
+                    <td>65万円 or 55万円</td>
+                </tr>
+                <tr>
+                    <td>帳簿</td>
+                    <td>収支内訳書</td>
+                    <td>簡易な帳簿</td>
+                    <td>複式簿記</td>
+                </tr>
+                <tr>
+                    <td>手続き</td>
+                    <td>特になし</td>
+                    <td>開始年の3月15日までに申請</td>
+                    <td>開始年の3月15日までに申請</td>
+                </tr>
+            </table>
+            
+            <h3>経費として認められるもの</h3>
+            <ul>
+                <li><strong>固定費</strong>: 固定資産税、都市計画税、減価償却費</li>
+                <li><strong>管理費</strong>: 管理委託費、清掃費、警備費</li>
+                <li><strong>修繕費</strong>: 建物や設備の修理、メンテナンス費用</li>
+                <li><strong>保険料</strong>: 火災保険、地震保険</li>
+                <li><strong>金融費用</strong>: ローン利息（元金は経費にならない）</li>
+                <li><strong>その他</strong>: 広告宣伝費、交通費、通信費、事務用品費</li>
+            </ul>
+        </div>
+    </div>
+    
+    <div id="documents" class="tabcontent">
+        <div class="container">
+            <h2>必要書類チェックリスト</h2>
+            <p>確定申告の際に準備しておくべき書類のリストです。必要に応じてチェックしてください。</p>
+            
+            <h3>基本書類</h3>
+            <div class="form-group">
+                <input type="checkbox" id="doc1"> <label for="doc1" style="display: inline;">確定申告書B（第一表・第二表）</label>
+            </div>
+            <div class="form-group">
+                <input type="checkbox" id="doc2"> <label for="doc2" style="display: inline;">収支内訳書または青色申告決算書</label>
+            </div>
+            <div class="form-group">
+                <input type="checkbox" id="doc3"> <label for="doc3" style="display: inline;">マイナンバーカードまたは通知カードと身分証明書</label>
+            </div>
+            
+            <h3>収入関連書類</h3>
+            <div class="form-group">
+                <input type="checkbox" id="inc1"> <label for="inc1" style="display: inline;">賃貸契約書のコピー</label>
+            </div>
+            <div class="form-group">
+                <input type="checkbox" id="inc2"> <label for="inc2" style="display: inline;">家賃の入金記録（通帳など）</label>
+            </div>
+            <div class="form-group">
+                <input type="checkbox" id="inc3"> <label for="inc3" style="display: inline;">敷金・礼金などの収入証明</label>
+            </div>
+            
+            <h3>経費関連書類</h3>
+            <div class="form-group">
+                <input type="checkbox" id="exp1"> <label for="exp1" style="display: inline;">固定資産税・都市計画税の納税通知書</label>
+            </div>
+            <div class="form-group">
+                <input type="checkbox" id="exp2"> <label for="exp2" style="display: inline;">火災保険契約書・領収書</label>
+            </div>
+            <div class="form-group">
+                <input type="checkbox" id="exp3"> <label for="exp3" style="display: inline;">修繕費の領収書・明細書</label>
+            </div>
+            <div class="form-group">
+                <input type="checkbox" id="exp4"> <label for="exp4" style="display: inline;">管理費・共益費の領収書</label>
+            </div>
+            <div class="form-group">
+                <input type="checkbox" id="exp5"> <label for="exp5" style="display: inline;">住宅ローンの年間取引明細書</label>
+            </div>
+            <div class="form-group">
+                <input type="checkbox" id="exp6"> <label for="exp6" style="display: inline;">その他経費の領収書（交通費、通信費など）</label>
+            </div>
+            
+            <h3>減価償却関連書類</h3>
+            <div class="form-group">
+                <input type="checkbox" id="dep1"> <label for="dep1" style="display: inline;">建物の登記簿謄本</label>
+            </div>
+            <div class="form-group">
+                <input type="checkbox" id="dep2"> <label for="dep2" style="display: inline;">購入時の売買契約書</label>
+            </div>
+            <div class="form-group">
+                <input type="checkbox" id="dep3"> <label for="dep3" style="display: inline;">減価償却費の計算書</label>
+            </div>
+            
+            <button onclick="saveChecklist()">チェックリスト保存</button>
+        </div>
+    </div>
+    
     <script>
-        function calculateIncome() {
-            let rent = parseFloat(document.getElementById("rent").value);
-            let managementFeeRate = parseFloat(document.getElementById("managementFee").value) / 100;
-            let taxRate = parseFloat(document.getElementById("taxRate").value) / 100;
-
-            if (isNaN(rent) || isNaN(managementFeeRate) || isNaN(taxRate)) {
-                alert("すべての項目を正しく入力してください。");
-                return;
+        function openTab(evt, tabName) {
+            var i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tabcontent");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
             }
-
-            // 管理費の計算（家賃から差し引く）
-            let managementFee = rent * managementFeeRate;
-            let tax = managementFee * taxRate;
-            let totalDeduction = managementFee + tax;
-
-            // 月額収入（家賃から管理費と消費税を引く）
-            let monthlyIncome = rent - totalDeduction;
-
-            // 年間収入
-            let yearlyIncome = monthlyIncome * 12;
-
-            // 結果を表示
-            document.getElementById("monthlyIncome").innerText = `月額収入: ${monthlyIncome.toLocaleString()} 円`;
-            document.getElementById("yearlyIncome").innerText = `年間収入: ${yearlyIncome.toLocaleString()} 円`;
+            tablinks = document.getElementsByClassName("tablinks");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+            document.getElementById(tabName).style.display = "block";
+            evt.currentTarget.className += " active";
+        }
+        
+        function calculateIncome() {
+            // 収入の取得
+            const totalRent = Number(document.getElementById('totalRent').value) || 0;
+            const otherIncome = Number(document.getElementById('otherIncome').value) || 0;
+            const totalIncome = totalRent + otherIncome;
+            
+            // 経費の取得
+            const propertyTax = Number(document.getElementById('propertyTax').value) || 0;
+            const insurance = Number(document.getElementById('insurance').value) || 0;
+            const maintenance = Number(document.getElementById('maintenance').value) || 0;
+            const management = Number(document.getElementById('management').value) || 0;
+            const depreciation = Number(document.getElementById('depreciation').value) || 0;
+            const loan = Number(document.getElementById('loan').value) || 0;
+            const otherExpenses = Number(document.getElementById('otherExpenses').value) || 0;
+            
+            const totalExpenses = propertyTax + insurance + maintenance + management + 
+                                  depreciation + loan + otherExpenses;
+            
+            // 所得の計算
+            let income = totalIncome - totalExpenses;
+            
+            // 青色申告特別控除
+            const blueForm = document.getElementById('blueForm').value;
+            let blueDeduction = 0;
+            
+            if (blueForm === 'simple') {
+                blueDeduction = Math.min(income, 100000);
+            } else if (blueForm === 'full') {
+                blueDeduction = Math.min(income, 650000);
+            }
+            
+            const finalIncome = income - blueDeduction;
+            
+            // 結果の表示
+            const resultDiv = document.getElementById('result');
+            const resultContent = document.getElementById('resultContent');
+            
+            let html = `
+                <table>
+                    <tr>
+                        <td colspan="2"><strong>収入</strong></td>
+                    </tr>
+                    <tr>
+                        <td>家賃収入</td>
+                        <td>${totalRent.toLocaleString()}円</td>
+                    </tr>
+                    <tr>
+                        <td>その他収入</td>
+                        <td>${otherIncome.toLocaleString()}円</td>
+                    </tr>
+                    <tr>
+                        <td><strong>収入合計</strong></td>
+                        <td><strong>${totalIncome.toLocaleString()}円</strong></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><strong>経費</strong></td>
+                    </tr>
+                    <tr>
+                        <td>固定資産税</td>
+                        <td>${propertyTax.toLocaleString()}円</td>
+                    </tr>
+                    <tr>
+                        <td>火災保険料</td>
+                        <td>${insurance.toLocaleString()}円</td>
+                    </tr>
+                    <tr>
+                        <td>修繕費</td>
+                        <td>${maintenance.toLocaleString()}円</td>
+                    </tr>
+                    <tr>
+                        <td>管理費</td>
+                        <td>${management.toLocaleString()}円</td>
+                    </tr>
+                    <tr>
+                        <td>減価償却費</td>
+                        <td>${depreciation.toLocaleString()}円</td>
+                    </tr>
+                    <tr>
+                        <td>ローン利息</td>
+                        <td>${loan.toLocaleString()}円</td>
+                    </tr>
+                    <tr>
+                        <td>その他経費</td>
+                        <td>${otherExpenses.toLocaleString()}円</td>
+                    </tr>
+                    <tr>
+                        <td><strong>経費合計</strong></td>
+                        <td><strong>${totalExpenses.toLocaleString()}円</strong></td>
+                    </tr>
+                    <tr>
+                        <td><strong>所得金額</strong></td>
+                        <td><strong>${income.toLocaleString()}円</strong></td>
+                    </tr>
+                `;
+            
+            if (blueDeduction > 0) {
+                html += `
+                    <tr>
+                        <td>青色申告特別控除</td>
+                        <td>-${blueDeduction.toLocaleString()}円</td>
+                    </tr>
+                    <tr>
+                        <td><strong>課税所得金額</strong></td>
+                        <td><strong>${finalIncome.toLocaleString()}円</strong></td>
+                    </tr>
+                `;
+            }
+            
+            html += `</table>`;
+            
+            // 注意事項
+            html += `
+                <div class="info-text">
+                    <p><strong>注意事項:</strong></p>
+                    <ul>
+                        <li>この計算結果は概算です。詳細な税額計算には他の所得や控除も考慮する必要があります。</li>
+                        <li>実際の申告時には税務署や税理士にご相談ください。</li>
+                    </ul>
+                </div>
+            `;
+            
+            resultContent.innerHTML = html;
+            resultDiv.style.display = 'block';
+        }
+        
+        function saveChecklist() {
+            alert('チェックリストが保存されました。（実際のウェブサイトでは、ここでデータを保存する機能を実装します）');
         }
     </script>
 </body>
-
 </html>
